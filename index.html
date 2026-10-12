@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WEB GABUT</title>
+<style>
+:root{--bg:#fff7d6;--card:#fff;--ink:#111;--a:#ff6b9d;--b:#4dd4ff;--c:#a6ff4d;--d:#ffd23f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1a2e;--card:#2a2945;--ink:#f5f5f5}}
+:root[data-theme="dark"]{--bg:#1b1a2e;--card:#2a2945;--ink:#f5f5f5}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Trebuchet MS",Verdana,sans-serif;background-image:radial-gradient(var(--ink) 1px,transparent 1px);background-size:22px 22px;background-attachment:fixed}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+h1{margin:0;font-size:clamp(2rem,8vw,3.2rem);background:var(--d);color:#111;display:inline-block;padding:4px 14px;border:4px solid var(--ink);box-shadow:6px 6px 0 var(--ink);transform:rotate(-2deg)}
+.sub{margin:14px 0 20px;font-weight:700}
+.card{background:var(--card);border:4px solid var(--ink);box-shadow:8px 8px 0 var(--ink);padding:18px;margin-bottom:26px}
+.card h2{margin:0 0 12px;font-size:1.3rem}
+button{font:inherit;font-weight:800;color:#111;background:var(--b);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:10px 16px;cursor:pointer;transition:transform .08s,box-shadow .08s}
+button:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
+input{font:inherit;width:100%;padding:10px;border:3px solid var(--ink);background:var(--bg);color:var(--ink);margin-bottom:12px}
+.out{margin-top:14px;padding:12px;border:3px dashed var(--ink);min-height:52px;font-weight:700;font-size:1.1rem;overflow-wrap:anywhere}
+#pop{width:100%;font-size:2rem;padding:28px 10px;background:var(--a);position:relative;overflow:hidden;user-select:none;-webkit-user-select:none}
+.stats{display:flex;justify-content:space-between;margin-top:12px;font-weight:800;flex-wrap:wrap;gap:8px}
+.float{position:fixed;pointer-events:none;font-size:1.8rem;animation:up .9s ease-out forwards;z-index:9}
+@keyframes up{to{transform:translateY(-90px) rotate(20deg);opacity:0}}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.dice{font-size:3.5rem;line-height:1}
+footer{text-align:center;font-weight:700;opacity:.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>WEB GABUT 🥱</h1>
+  <button id="theme">🌓 Tema</button>
+</header>
+<p class="sub">Lagi gabut? Tenang, di sini tempatnya. Pencet-pencet aja!</p>
+
+<section class="card">
+  <h2>👆 Pencet Sampai Puas</h2>
+  <button id="pop">KLIK AKU!</button>
+  <div class="stats"><span>Klik: <b id="cnt">0</b></span><span>Rekor: <b id="best">0</b></span><button id="reset">Reset</button></div>
+  <div class="out" id="rank">Mulai dulu klik-kliknya...</div>
+</section>
+
+<section class="card">
+  <h2>🎲 Ngapain Ya Enaknya?</h2>
+  <button id="idea">Kasih Ide Gabut</button>
+  <div class="out" id="ideaOut">Klik tombolnya buat dapat ide.</div>
+</section>
+
+<section class="card">
+  <h2>🤔 Bingung Milih?</h2>
+  <input id="opts" placeholder="Pisahkan pakai koma: nasi goreng, mie, bakso">
+  <button id="pick">Pilihin Dong!</button>
+  <div class="out" id="pickOut">Hasilnya muncul di sini.</div>
+</section>
+
+<section class="card">
+  <h2>🪙 Dadu &amp; Koin</h2>
+  <div class="row"><button id="dice">Lempar Dadu</button><button id="coin">Lempar Koin</button></div>
+  <div class="out"><span class="dice" id="rollOut">🎲</span></div>
+</section>
+
+<footer>Dibuat buat yang lagi gabut ✌️</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const pickRandom=a=>a[Math.floor(Math.random()*a.length)];
+
+// theme
+$('theme').onclick=()=>{
+  const r=document.documentElement;
+  const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+  r.dataset.theme=dark?'light':'dark';
+};
+
+// clicker
+let n=0,best=0;
+try{best=+localStorage.getItem('gabut-best')||0}catch(e){}
+$('best').textContent=best;
+const ranks=[[0,'Mulai dulu klik-kliknya...'],[10,'Pemanasan jari 🔥'],[30,'Mulai kecanduan nih 😏'],[60,'Gabut level menengah 🥱'],[100,'Jari baja! 💪'],[200,'Legenda gabut 👑'],[400,'Tolong cari kegiatan lain 😭']];
+const emo=['✨','💥','🎉','⭐','🍕','🐸','🔥'];
+$('pop').onclick=e=>{
+  n++;$('cnt').textContent=n;
+  if(n>best){best=n;$('best').textContent=best;try{localStorage.setItem('gabut-best',best)}catch(_){}}
+  $('rank').textContent=[...ranks].reverse().find(r=>n>=r[0])[1];
+  const s=document.createElement('span');s.className='float';s.textContent=pickRandom(emo);
+  s.style.left=(e.clientX||innerWidth/2)-14+'px';s.style.top=(e.clientY||innerHeight/2)-14+'px';
+  document.body.appendChild(s);setTimeout(()=>s.remove(),900);
+};
+$('reset').onclick=()=>{n=0;$('cnt').textContent=0;$('rank').textContent=ranks[0][1]};
+
+// ideas
+const ideas=['Bikin kapal dari tisu 🚢','Foto benda random lalu kasih nama dramatis','Hitung ubin di kamar','Telepon teman lama, tanya kabar','Rapikan galeri HP 📱','Bikin playlist untuk mood hari ini 🎧','Gambar kucing pakai tangan non-dominan','Tebak-tebakan sama diri sendiri','Joget 1 lagu penuh 💃','Tulis surat untuk dirimu 5 tahun lagi','Cari kata terpanjang di KBBI','Masak mie dengan topping aneh 🍜','Jalan kaki 10 menit tanpa HP','Belajar 1 kata bahasa asing baru','Bikin tantangan: tahan ketawa 1 menit','Susun ulang meja belajarmu']
+let last=-1;
+$('idea').onclick=()=>{let i;do{i=Math.floor(Math.random()*ideas.length)}while(i===last);last=i;$('ideaOut').textContent=ideas[i]};
+
+// picker
+$('pick').onclick=()=>{
+  const list=$('opts').value.split(',').map(s=>s.trim()).filter(Boolean);
+  $('pickOut').textContent=list.length<2?'Isi minimal 2 pilihan ya 😅':'👉 '+pickRandom(list);
+};
+
+// dice & coin
+$('dice').onclick=()=>{const f=['⚀','⚁','⚂','⚃','⚄','⚅'];const v=Math.floor(Math.random()*6);$('rollOut').textContent=f[v]+' = '+(v+1)};
+$('coin').onclick=()=>{$('rollOut').textContent=Math.random()<.5?'🪙 GAMBAR':'🪙 ANGKA'};
+</script>
+</body>
+</html>
